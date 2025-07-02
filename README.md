@@ -20,6 +20,19 @@ Google Colab無料版で動作する商用利用可能なStable Diffusion画像�
 !python quick_start.py
 ```
 
+## 🛠️ トラブルシューティング
+
+エラーが発生した場合：
+```python
+# 最終修正スクリプト実行
+!python scripts/final_fix.py
+
+# または個別修正
+!python scripts/numpy_fix.py        # NumPy問題
+!python scripts/quick_fix.py        # Hugging Face Hub問題
+!python scripts/manual_setup.py     # 手動セットアップ
+```
+
 ## 📁 主な用途
 
 - **YouTubeサムネイル**生成 (16:9)
