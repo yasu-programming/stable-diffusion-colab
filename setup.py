@@ -45,7 +45,7 @@ def install_dependencies():
     
     # NumPy 2.0互換性問題の修正
     print("🔧 NumPy互換性修正中...")
-    run_command("pip install 'numpy<2.0'", "NumPy 1.x固定")
+    run_command('pip install "numpy<2.0"', "NumPy 1.x固定")
     
     # PyTorchを先にインストール（バージョン固定）
     torch_install = run_command(
@@ -57,8 +57,9 @@ def install_dependencies():
         print("⚠️ PyTorchインストールに失敗、デフォルト版を試行中...")
         run_command("pip install torch torchvision torchaudio", "PyTorch (デフォルト版)")
     
-    # Hugging Face Hub を先にアップグレード
-    run_command("pip install --upgrade huggingface_hub", "Hugging Face Hub アップグレード")
+    # Hugging Face Hub を先にアップグレード（互換性修正）
+    run_command("pip uninstall -y huggingface_hub", "古いHugging Face Hub削除")
+    run_command("pip install huggingface_hub==0.20.3", "Hugging Face Hub 互換バージョン")
     
     # その他のライブラリ（バージョン互換性考慮）
     packages = [
@@ -66,9 +67,9 @@ def install_dependencies():
         "transformers==4.36.0",  # 互換性確認済み
         "accelerate==0.25.0",
         "safetensors==0.4.0",
-        "huggingface_hub>=0.20.0",  # 明示的にバージョン指定
+        "huggingface_hub==0.20.3",  # 互換バージョン固定
         "pillow>=9.0.0",
-        "numpy<2.0",  # NumPy 1.x固定
+        '"numpy<2.0"',  # NumPy 1.x固定
         "matplotlib>=3.5.0",
         "ipywidgets>=8.0.0"
     ]
