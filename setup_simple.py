@@ -37,13 +37,18 @@ def main():
         print("⚠️ CUDA版PyTorchに失敗、CPU版を試行...")
         run_command("pip install torch torchvision torchaudio", "PyTorch (CPU版)")
     
-    # 2. Diffusersとその他
+    # 2. Hugging Face Hubを先にアップグレード
+    print("📦 Hugging Face Hub アップグレード中...")
+    run_command("pip install --upgrade huggingface_hub", "Hugging Face Hub")
+    
+    # 3. Diffusersとその他
     print("📦 Diffusers インストール中...")
     packages = [
         "diffusers==0.25.1",
         "transformers==4.36.0", 
         "accelerate==0.25.0",
         "safetensors==0.4.0",
+        "huggingface_hub>=0.20.0",
         "pillow",
         "numpy",
         "matplotlib"

@@ -6,6 +6,9 @@ torch==2.1.0
 torchvision==0.16.0
 torchaudio==2.1.0
 
+# Hugging Face Hub（先にアップグレード必要）
+huggingface_hub>=0.20.0
+
 # Diffusers & AI（互換性確認済みバージョン）
 diffusers==0.25.1
 transformers==4.36.0

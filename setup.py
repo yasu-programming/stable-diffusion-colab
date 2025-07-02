@@ -53,12 +53,16 @@ def install_dependencies():
         print("⚠️ PyTorchインストールに失敗、デフォルト版を試行中...")
         run_command("pip install torch torchvision torchaudio", "PyTorch (デフォルト版)")
     
+    # Hugging Face Hub を先にアップグレード
+    run_command("pip install --upgrade huggingface_hub", "Hugging Face Hub アップグレード")
+    
     # その他のライブラリ（バージョン互換性考慮）
     packages = [
         "diffusers==0.25.1",  # 安定版
         "transformers==4.36.0",  # 互換性確認済み
         "accelerate==0.25.0",
         "safetensors==0.4.0",
+        "huggingface_hub>=0.20.0",  # 明示的にバージョン指定
         "pillow>=9.0.0",
         "numpy>=1.21.0",
         "matplotlib>=3.5.0",
