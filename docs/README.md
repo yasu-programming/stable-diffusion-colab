@@ -47,10 +47,23 @@ YouTube・Note用のサムネイル・アイコン生成に特化した、Google
 1. **GPU有効化**: `ランタイム` → `ランタイムのタイプを変更` → `GPU`
 2. **ノートブック使用**: `sdxl_colab_quickstart.ipynb` を開いて実行
 
+#### Google Colab セル実行での開始
+```bash
+# リポジトリクローン
+!git clone https://github.com/yasu-programming/stable-diffusion-colab.git
+%cd stable-diffusion-colab
+
+# 自動セットアップ（SDXL対応）
+!python setup.py
+
+# 動作確認テスト
+!python sdxl_test.py
+```
+
 #### ローカル環境での開始
 ```bash
 # リポジトリクローン
-git clone https://github.com/YOUR_USERNAME/stable-diffusion-colab.git
+git clone https://github.com/yasu-programming/stable-diffusion-colab.git
 cd stable-diffusion-colab
 
 # 自動セットアップ（SDXL対応）
