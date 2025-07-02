@@ -43,6 +43,10 @@ def install_dependencies():
     """必要なライブラリをインストール"""
     print("📦 ライブラリインストール中...")
     
+    # NumPy 2.0互換性問題の修正
+    print("🔧 NumPy互換性修正中...")
+    run_command("pip install 'numpy<2.0'", "NumPy 1.x固定")
+    
     # PyTorchを先にインストール（バージョン固定）
     torch_install = run_command(
         "pip install torch==2.1.0 torchvision==0.16.0 torchaudio==2.1.0 --index-url https://download.pytorch.org/whl/cu118",
@@ -64,7 +68,7 @@ def install_dependencies():
         "safetensors==0.4.0",
         "huggingface_hub>=0.20.0",  # 明示的にバージョン指定
         "pillow>=9.0.0",
-        "numpy>=1.21.0",
+        "numpy<2.0",  # NumPy 1.x固定
         "matplotlib>=3.5.0",
         "ipywidgets>=8.0.0"
     ]

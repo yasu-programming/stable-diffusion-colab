@@ -17,7 +17,7 @@ safetensors==0.4.0
 
 # 画像処理
 Pillow>=9.0.0
-numpy>=1.21.0
+numpy<2.0  # NumPy 2.0互換性問題回避
 matplotlib>=3.5.0
 
 # Colab用UI
