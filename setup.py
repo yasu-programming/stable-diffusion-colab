@@ -49,32 +49,30 @@ def install_dependencies():
     for package in packages_to_remove:
         run_command(f"pip uninstall -y {package}", f"{package} 削除")
     
-    # NumPy 1.x を先にインストール（特定バージョン）
-    print("🔧 NumPy 1.24.3 インストール...")
-    run_command("pip install numpy==1.24.3", "NumPy 1.24.3固定")
+    # 現代的で確実に動作するバージョンでインストール
+    print("🔧 NumPy 1.26.4 インストール...")
+    run_command("pip install numpy==1.26.4", "NumPy 1.26.4固定")
     
-    # PyTorchを先にインストール（バージョン固定）
+    # PyTorch 2.2.2（NumPy 1.26.4と互換、現代的）
     torch_install = run_command(
-        "pip install torch==2.1.0 torchvision==0.16.0 torchaudio==2.1.0 --index-url https://download.pytorch.org/whl/cu118",
-        "PyTorch 2.1.0 インストール"
+        "pip install torch==2.2.2 torchvision==0.17.2 torchaudio==2.2.2 --index-url https://download.pytorch.org/whl/cu118",
+        "PyTorch 2.2.2 インストール"
     )
     
     if not torch_install:
         print("⚠️ CUDA版PyTorchに失敗、CPU版を試行中...")
-        run_command("pip install torch==2.1.0 torchvision==0.16.0 torchaudio==2.1.0", "PyTorch 2.1.0 (CPU版)")
+        run_command("pip install torch==2.2.2 torchvision==0.17.2 torchaudio==2.2.2", "PyTorch 2.2.2 (CPU版)")
     
-    # Hugging Face Hub 互換バージョンインストール
-    run_command("pip install huggingface_hub==0.20.3", "Hugging Face Hub 互換バージョン")
+    # Hugging Face Hub 現代版
+    run_command("pip install huggingface_hub==0.24.6", "Hugging Face Hub 0.24.6")
     
-    # その他のライブラリ（バージョン互換性考慮）
+    # その他のライブラリ（現代的で確実に動作するバージョン）
     packages = [
-        "diffusers==0.25.1",  # 安定版
-        "transformers==4.36.0",  # 互換性確認済み
-        "accelerate==0.25.0",
-        "safetensors==0.4.0",
-        "huggingface_hub==0.20.3",  # 互換バージョン固定
+        "diffusers==0.30.0",  # 最新版（NumPy 1.26.4と互換）
+        "transformers==4.44.0",  # 最新版
+        "accelerate==0.34.0",  # 最新版
+        "safetensors==0.4.4",   # 最新版
         "pillow>=9.0.0",
-        # NumPy は既にインストール済み
         "matplotlib>=3.5.0",
         "ipywidgets>=8.0.0"
     ]
@@ -84,9 +82,9 @@ def install_dependencies():
         if not success:
             print(f"⚠️  {package} のインストールに失敗しましたが続行します")
     
-    # xformersは互換バージョンをインストール（オプション）
-    print("🔧 xformers 互換バージョン インストール中...")
-    xformers_success = run_command("pip install xformers==0.0.22", "xformers 0.0.22")
+    # xformers 現代版（オプション）
+    print("🔧 xformers 現代版 インストール中...")
+    xformers_success = run_command("pip install xformers==0.0.27", "xformers 0.0.27")
     if not xformers_success:
         print("⚠️ xformersインストールに失敗 - メモリ効率化なしで続行")
 
@@ -128,10 +126,19 @@ def download_models():
         )
         print("✅ SD v1.5 ダウンロード完了")
         
+        # 現代的メモリ最適化テスト
+        if torch.cuda.is_available():
+            try:
+                pipe.enable_memory_efficient_attention()
+                print("✅ メモリ効率化テスト成功")
+            except Exception as e:
+                print(f"⚠️ メモリ効率化テスト失敗: {str(e)[:50]}")
+        
         # メモリ解放
         del pipe
         if torch.cuda.is_available():
             torch.cuda.empty_cache()
+            print("✅ GPUメモリクリア完了")
         
         return True
     except ImportError as e:
@@ -165,16 +172,19 @@ def generate_image(prompt, negative_prompt="", width=512, height=512):
     
     if torch.cuda.is_available():
         pipe = pipe.to("cuda")
-        # xformersエラー回避のため、メモリ効率化を無効化
+        
+        # 現代的メモリ最適化（エラーハンドリング付き）
         try:
             pipe.enable_memory_efficient_attention()
-        except:
-            print("⚠️ メモリ効率化をスキップ（xformers問題）")
+            print("✅ メモリ効率化 ON")
+        except Exception as e:
+            print(f"⚠️ メモリ効率化スキップ: {str(e)[:50]}")
         
         try:
             pipe.enable_model_cpu_offload()
-        except:
-            print("⚠️ CPU offloadをスキップ")
+            print("✅ CPU Offload ON")
+        except Exception as e:
+            print(f"⚠️ CPU Offloadスキップ: {str(e)[:50]}")
     
     # 画像生成
     image = pipe(

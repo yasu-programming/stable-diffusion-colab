@@ -1,31 +1,33 @@
 # Stable Diffusion Colab Requirements
-# Google Colab 無料版最適化版（バージョン互換性確認済み）
+# Google Colab 無料版最適化版（現代的バージョン）
 
-# PyTorch（CUDA 11.8対応）
-torch==2.1.0
-torchvision==0.16.0
-torchaudio==2.1.0
+# PyTorch（CUDA 11.8対応、現代版）
+torch==2.2.2
+torchvision==0.17.2
+torchaudio==2.2.2
 
-# Hugging Face Hub（先にアップグレード必要）
-huggingface_hub>=0.20.0
+# NumPy（現代的で安定）
+numpy==1.26.4
 
-# Diffusers & AI（互換性確認済みバージョン）
-diffusers==0.25.1
-transformers==4.36.0
-accelerate==0.25.0
-safetensors==0.4.0
+# Hugging Face Hub（現代版）
+huggingface_hub==0.24.6
+
+# Diffusers & AI（最新版）
+diffusers==0.30.0
+transformers==4.44.0
+accelerate==0.34.0
+safetensors==0.4.4
 
 # 画像処理
 Pillow>=9.0.0
-numpy<2.0  # NumPy 2.0互換性問題回避
 matplotlib>=3.5.0
 
 # Colab用UI
 ipywidgets>=8.0.0
 tqdm>=4.60.0
 
-# メモリ効率化（オプション）
-# xformers  # setup.pyで別途インストール
+# メモリ効率化（現代版）
+xformers==0.0.27
 
 # オプション: 日本語対応
 # fugashi>=1.2.0
