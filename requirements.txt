@@ -1,0 +1,29 @@
+# Stable Diffusion Colab Requirements
+# Google Colab 無料版最適化版
+
+# 基本ライブラリ
+torch>=2.0.0
+torchvision
+torchaudio
+
+# Diffusers & AI
+diffusers>=0.25.0
+transformers>=4.30.0
+accelerate>=0.20.0
+safetensors>=0.3.0
+
+# メモリ効率化
+xformers>=0.0.20  # メモリ使用量削減
+
+# 画像処理
+Pillow>=9.0.0
+numpy>=1.21.0
+matplotlib>=3.5.0
+
+# Colab用UI
+ipywidgets>=8.0.0
+tqdm>=4.60.0
+
+# オプション: 日本語対応
+# fugashi>=1.2.0
+# unidic-lite>=1.0.0

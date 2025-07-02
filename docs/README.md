@@ -32,8 +32,20 @@ Google Colabでのセットアップ手順
 - Note記事アイキャッチ例
 - プロンプト作成のコツ
 
+### [colab-workflow.md](./colab-workflow.md)
+毎回のGitHubクローンワークフロー
+- 3ステップクイックスタート
+- 効率的なセットアップ手順
+- ファイル管理とダウンロード方法
+- トラブルシューティング
+
 ## 🚀 クイックスタート
 
+### 毎回のワークフロー（推奨）
+1. [colab-workflow.md](./colab-workflow.md) - GitHubクローン→即座に画像生成
+2. `colab_quickstart.ipynb` をGoogle Colabで開いてワンクリック実行
+
+### 初回セットアップ
 1. [colab-setup.md](./colab-setup.md) でGoogle Colabを設定
 2. [model-recommendations.md](./model-recommendations.md) で適切なモデルを選択
 3. [usage-examples.md](./usage-examples.md) のサンプルコードを参考に画像生成
