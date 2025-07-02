@@ -41,16 +41,77 @@ YouTube・Note用のサムネイル・アイコン生成に特化した、Google
 
 ## 🚀 クイックスタート
 
-### 1. 基本セットアップ
+### 1. セットアップ手順
+
+#### Google Colab での開始
+1. **GPU有効化**: `ランタイム` → `ランタイムのタイプを変更` → `GPU`
+2. **ノートブック使用**: `sdxl_colab_quickstart.ipynb` を開いて実行
+
+#### ローカル環境での開始
 ```bash
+# リポジトリクローン
+git clone https://github.com/YOUR_USERNAME/stable-diffusion-colab.git
+cd stable-diffusion-colab
+
 # 自動セットアップ（SDXL対応）
 python setup.py
+
+# 動作確認テスト
+python sdxl_test.py
 ```
 
-### 2. SDXL画像生成テスト
-```bash
-# SDXL基本テスト
-python sdxl_test.py
+### 2. 画像生成手順
+
+#### YouTube サムネイル生成
+```python
+from diffusers import DiffusionPipeline
+import torch
+
+# パイプライン初期化
+pipe = DiffusionPipeline.from_pretrained(
+    "stabilityai/stable-diffusion-xl-base-1.0",
+    torch_dtype=torch.float16,
+    use_safetensors=True,
+    variant="fp16"
+)
+pipe.enable_model_cpu_offload()
+
+# YouTube サムネイル生成（16:9）
+images = pipe(
+    prompt="Excited gamer with headphones playing video game, vibrant colors, YouTube thumbnail style",
+    height=576, width=1024,
+    num_inference_steps=25,
+    guidance_scale=8.0
+).images
+
+# 保存
+images[0].save("youtube_thumbnail.png")
+```
+
+#### Note・ブログ画像生成
+```python
+# Note 記事用画像生成（1.91:1）
+blog_images = pipe(
+    prompt="Modern laptop on clean desk with coffee, minimalist workspace, professional photography",
+    height=536, width=1024,
+    num_inference_steps=30,
+    guidance_scale=7.5
+).images
+
+blog_images[0].save("blog_header.png")
+```
+
+#### アイコン・ロゴ生成
+```python
+# アイコン生成（1:1）
+icon_images = pipe(
+    prompt="Simple geometric logo design, modern minimalist style, clean lines",
+    height=1024, width=1024,
+    num_inference_steps=35,
+    guidance_scale=9.0
+).images
+
+icon_images[0].save("brand_icon.png")
 ```
 
 ### 3. 生成された画像の確認
