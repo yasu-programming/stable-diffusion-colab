@@ -10,7 +10,7 @@ Google Colab無料版で動作する商用利用可能なStable Diffusion画像�
 
 ### 2. リポジトリクローン & セットアップ
 ```python
-!git clone https://github.com/YOUR_USERNAME/stable-diffusion-colab.git
+!git clone https://github.com/yasu-programming/stable-diffusion-colab.git
 %cd stable-diffusion-colab
 !python setup.py
 ```
