@@ -4,57 +4,64 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Google Colab無料版で動作する商用利用可能なStable Diffusion画像生成システム。YouTube・Note用のサムネイル・アイコン生成に特化。
+Google Colab無料版でStable Diffusion XL Base 1.0を使用する商用利用可能な画像生成システム。YouTube・Note用のサムネイル・アイコン生成に特化。
 
 ## Commands
 
 ### Main Setup
 ```bash
-python setup.py  # 自動セットアップ（推奨）
-```
-
-### Troubleshooting
-```bash
-python scripts/final_fix.py      # 最終修正（確実）
-python scripts/modern_fix.py     # 現代的修正
-python scripts/ultimate_fix.py   # 古い安定版修正
+python setup.py  # SDXL自動セットアップ（推奨）
 ```
 
 ### Testing
 ```bash
-python quick_start.py            # 基本テスト
-python modern_test.py            # 現代的テスト
-python ultra_stable_test.py      # 安定版テスト
+python sdxl_test.py              # SDXL詳細テスト
+```
+
+### Troubleshooting
+```bash
+python scripts/sdxl_fix.py       # SDXL修正（推奨）
+python scripts/memory_optimizer.py  # メモリ最適化
 ```
 
 ## Architecture
 
-### Core Dependencies
-- **NumPy 1.26.4**: 現代的で安定したバージョン
-- **PyTorch 2.2.2**: CUDA 11.8対応、NumPy 1.26.4と互換
-- **Diffusers 0.30.0**: 最新機能対応
-- **Transformers 4.44.0**: 最新版
-- **xformers 0.0.27**: メモリ効率化（オプション）
+### Core Dependencies (SDXL Optimized)
+- **diffusers >= 0.19.0**: SDXL対応版
+- **transformers**: 最新版
+- **safetensors**: セキュアなモデル読み込み
+- **accelerate**: 高速化ライブラリ
+- **invisible_watermark**: SDXL専用ライブラリ
+- **PyTorch 2.0+**: CUDA対応（公式推奨）
+- **xformers**: メモリ効率化（オプション）
 
 ### Directory Structure
 ```
 stable-diffusion-colab/
-├── setup.py                 # メインセットアップ
-├── docs/                    # 詳細ドキュメント
-├── scripts/                 # トラブルシューティング
-├── generated_images/        # 生成画像（実行時作成）
-├── models_cache/           # モデルキャッシュ（実行時作成）
-└── colab_quickstart.ipynb  # Colabテンプレート
+├── setup.py                    # SDXL自動セットアップ
+├── sdxl_test.py                # SDXL詳細テスト
+├── sdxl_colab_quickstart.ipynb # Google Colabテンプレート
+├── docs/                       # 詳細ドキュメント
+│   ├── README.md              # プロジェクト概要
+│   ├── sdxl-setup.md          # SDXL セットアップガイド
+│   ├── sdxl-workflow.md       # SDXL ワークフロー
+│   ├── sdxl-examples.md       # 使用例・サンプルコード
+│   └── requirements.md        # システム要件
+├── scripts/                    # トラブルシューティング
+│   ├── sdxl_fix.py            # SDXL修正スクリプト
+│   └── memory_optimizer.py    # メモリ最適化
+├── generated_images/           # 生成画像（実行時作成）
+└── logs/                      # テスト結果（実行時作成）
 ```
 
-### Version Compatibility Strategy
-1. **完全削除**: 既存の問題パッケージを削除
-2. **順序インストール**: NumPy → PyTorch → HF Hub → Diffusers
-3. **バージョン固定**: 互換性確認済みバージョンに固定
+### SDXL Setup Strategy
+1. **公式準拠**: Hugging Face公式ドキュメントに基づく実装
+2. **段階的インストール**: diffusers → transformers → PyTorch → オプション
+3. **メモリ最適化**: Google Colab無料版対応の最適化
 4. **エラーハンドリング**: xformers等のオプション機能は失敗時スキップ
 
-### Common Issues and Solutions
-- **NumPy 2.0問題**: NumPy 1.26.4に固定で解決
-- **cached_download問題**: HF Hub 0.24.6で解決
-- **xformers互換性**: 0.0.27使用、失敗時はスキップ
-- **メモリ効率化**: エラーハンドリング付きで安全に有効化
+### Common Issues and Solutions (SDXL)
+- **CUDA Out of Memory**: CPU オフロード・VAE タイリングで解決
+- **モデル読み込み失敗**: safetensors・variant="fp16"で解決
+- **生成速度遅い**: torch.compile・xformersで高速化
+- **メモリ効率化**: 専用最適化スクリプトで自動調整
