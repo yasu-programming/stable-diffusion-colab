@@ -43,23 +43,36 @@ def install_dependencies():
     """必要なライブラリをインストール"""
     print("📦 ライブラリインストール中...")
     
-    # 基本ライブラリ
+    # PyTorchを先にインストール（バージョン固定）
+    torch_install = run_command(
+        "pip install torch==2.1.0 torchvision==0.16.0 torchaudio==2.1.0 --index-url https://download.pytorch.org/whl/cu118",
+        "PyTorch インストール"
+    )
+    
+    if not torch_install:
+        print("⚠️ PyTorchインストールに失敗、デフォルト版を試行中...")
+        run_command("pip install torch torchvision torchaudio", "PyTorch (デフォルト版)")
+    
+    # その他のライブラリ（バージョン互換性考慮）
     packages = [
-        "diffusers[torch]",
-        "transformers", 
-        "accelerate",
-        "safetensors",
-        "xformers",  # メモリ効率化
-        "pillow",
-        "numpy",
-        "matplotlib",
-        "ipywidgets"  # Colab用UI
+        "diffusers==0.25.1",  # 安定版
+        "transformers==4.36.0",  # 互換性確認済み
+        "accelerate==0.25.0",
+        "safetensors==0.4.0",
+        "pillow>=9.0.0",
+        "numpy>=1.21.0",
+        "matplotlib>=3.5.0",
+        "ipywidgets>=8.0.0"
     ]
     
     for package in packages:
         success = run_command(f"pip install {package}", f"{package} インストール")
         if not success:
             print(f"⚠️  {package} のインストールに失敗しましたが続行します")
+    
+    # xformersは最後に（オプション）
+    print("🔧 xformers インストール中（メモリ効率化）...")
+    run_command("pip install xformers --no-deps", "xformers インストール")
 
 def setup_directories():
     """必要なディレクトリを作成"""
@@ -80,21 +93,38 @@ def download_models():
     print("🤖 モデルダウンロード中...")
     
     try:
-        from diffusers import StableDiffusionPipeline
+        # インポートテスト
+        print("🔍 ライブラリインポート確認中...")
         import torch
+        print(f"✅ PyTorch {torch.__version__}")
+        
+        from diffusers import StableDiffusionPipeline
+        print("✅ Diffusers インポート成功")
         
         # SD 1.5をキャッシュにダウンロード
         print("📥 Stable Diffusion v1.5 ダウンロード中...")
-        StableDiffusionPipeline.from_pretrained(
+        pipe = StableDiffusionPipeline.from_pretrained(
             "runwayml/stable-diffusion-v1-5",
-            torch_dtype=torch.float16,
-            cache_dir="./models_cache"
+            torch_dtype=torch.float16 if torch.cuda.is_available() else torch.float32,
+            cache_dir="./models_cache",
+            safety_checker=None,
+            requires_safety_checker=False
         )
         print("✅ SD v1.5 ダウンロード完了")
         
+        # メモリ解放
+        del pipe
+        if torch.cuda.is_available():
+            torch.cuda.empty_cache()
+        
         return True
+    except ImportError as e:
+        print(f"❌ インポートエラー: {e}")
+        print("💡 再インストールを試してください: pip install --upgrade diffusers transformers")
+        return False
     except Exception as e:
         print(f"❌ モデルダウンロードエラー: {e}")
+        print("💡 手動でモデルを確認してください")
         return False
 
 def create_quick_start():
