@@ -45,13 +45,13 @@ def install_dependencies():
     
     # 問題のあるパッケージを完全削除
     print("🗑️ 既存パッケージ削除中...")
-    packages_to_remove = ["torch", "torchvision", "torchaudio", "numpy", "diffusers", "transformers", "huggingface_hub"]
+    packages_to_remove = ["torch", "torchvision", "torchaudio", "numpy", "diffusers", "transformers", "huggingface_hub", "xformers"]
     for package in packages_to_remove:
         run_command(f"pip uninstall -y {package}", f"{package} 削除")
     
-    # NumPy 1.x を先にインストール
-    print("🔧 NumPy 1.x インストール...")
-    run_command('pip install "numpy>=1.21.0,<2.0"', "NumPy 1.x固定")
+    # NumPy 1.x を先にインストール（特定バージョン）
+    print("🔧 NumPy 1.24.3 インストール...")
+    run_command("pip install numpy==1.24.3", "NumPy 1.24.3固定")
     
     # PyTorchを先にインストール（バージョン固定）
     torch_install = run_command(
@@ -84,9 +84,11 @@ def install_dependencies():
         if not success:
             print(f"⚠️  {package} のインストールに失敗しましたが続行します")
     
-    # xformersは最後に（オプション）
-    print("🔧 xformers インストール中（メモリ効率化）...")
-    run_command("pip install xformers --no-deps", "xformers インストール")
+    # xformersは互換バージョンをインストール（オプション）
+    print("🔧 xformers 互換バージョン インストール中...")
+    xformers_success = run_command("pip install xformers==0.0.22", "xformers 0.0.22")
+    if not xformers_success:
+        print("⚠️ xformersインストールに失敗 - メモリ効率化なしで続行")
 
 def setup_directories():
     """必要なディレクトリを作成"""
@@ -163,8 +165,16 @@ def generate_image(prompt, negative_prompt="", width=512, height=512):
     
     if torch.cuda.is_available():
         pipe = pipe.to("cuda")
-        pipe.enable_memory_efficient_attention()
-        pipe.enable_model_cpu_offload()
+        # xformersエラー回避のため、メモリ効率化を無効化
+        try:
+            pipe.enable_memory_efficient_attention()
+        except:
+            print("⚠️ メモリ効率化をスキップ（xformers問題）")
+        
+        try:
+            pipe.enable_model_cpu_offload()
+        except:
+            print("⚠️ CPU offloadをスキップ")
     
     # 画像生成
     image = pipe(
